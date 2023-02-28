@@ -4,9 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import pers.xxiangyeyu.dto.LoginFormDTO;
 import pers.xxiangyeyu.dto.Result;
+import pers.xxiangyeyu.dto.UserDTO;
 import pers.xxiangyeyu.entity.UserInfo;
 import pers.xxiangyeyu.service.IUserInfoService;
 import pers.xxiangyeyu.service.IUserService;
+import pers.xxiangyeyu.utils.UserHolder;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -57,8 +59,9 @@ public class UserController {
 
     @GetMapping("/me")
     public Result me(){
-        // TODO 获取当前登录的用户并返回
-        return Result.fail("功能未完成");
+        // 获取当前登录的用户并返回
+        UserDTO user = UserHolder.getUser();
+        return Result.ok(user);
     }
 
     @GetMapping("/info/{id}")

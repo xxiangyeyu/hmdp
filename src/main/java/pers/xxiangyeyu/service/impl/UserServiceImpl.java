@@ -1,11 +1,13 @@
 package pers.xxiangyeyu.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pers.xxiangyeyu.dto.LoginFormDTO;
 import pers.xxiangyeyu.dto.Result;
+import pers.xxiangyeyu.dto.UserDTO;
 import pers.xxiangyeyu.entity.User;
 import pers.xxiangyeyu.mapper.UserMapper;
 import pers.xxiangyeyu.service.IUserService;
@@ -62,7 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             user = createUserWithPhone(phone);
         }
         // 7、保存用户信息到session中
-        session.setAttribute("user",user);
+        session.setAttribute("user", BeanUtil.copyProperties(user, UserDTO.class));
         return Result.ok();
     }
 
