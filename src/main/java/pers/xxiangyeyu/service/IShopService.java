@@ -1,6 +1,7 @@
 package pers.xxiangyeyu.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import pers.xxiangyeyu.dto.Result;
 import pers.xxiangyeyu.entity.Shop;
 
 /**
@@ -9,4 +10,7 @@ import pers.xxiangyeyu.entity.Shop;
  */
 public interface IShopService extends IService<Shop> {
 
+    Result queryById(Long id);
+
+    Result update(Shop shop);
 }
