@@ -16,7 +16,7 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 登录拦截器
+        // 添加拦截器并排除不需要拦截的路径，即不用登录也可以访问的页面
         registry.addInterceptor(new LoginInterceptor())
                 .excludePathPatterns(
                       "/shop/**",
