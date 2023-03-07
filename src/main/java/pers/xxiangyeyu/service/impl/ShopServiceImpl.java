@@ -13,6 +13,7 @@ import pers.xxiangyeyu.dto.Result;
 import pers.xxiangyeyu.entity.Shop;
 import pers.xxiangyeyu.mapper.ShopMapper;
 import pers.xxiangyeyu.service.IShopService;
+import pers.xxiangyeyu.utils.CacheClient;
 import pers.xxiangyeyu.utils.RedisConstants;
 import pers.xxiangyeyu.utils.RedisData;
 
@@ -31,15 +32,20 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private CacheClient cacheClient;
+
     @Override
     public Result queryById(Long id) {
         // 缓存穿透
         // Shop shop = queryWithPassThrough(id);
+        // Shop shop = cacheClient.queryWithPassThrough(RedisConstants.CACHE_SHOP_KEY, id, Shop.class, id2 -> getById(id2), RedisConstants.CACHE_SHOP_TTL, TimeUnit.MINUTES);
 
         // 缓存击穿解决-互斥锁
         // Shop shop = queryWithMutex(id);
         // 缓存击穿解决-逻辑过期
         Shop shop = queryWithLogicalExpire(id);
+        // Shop shop = cacheClient.queryWithLogicalExpire(RedisConstants.CACHE_SHOP_KEY, id, Shop.class, id2 -> getById(id2), 20L, TimeUnit.SECONDS);
         if (shop == null) {
             return Result.fail("店铺不存在！");
         }
