@@ -21,17 +21,18 @@ public class RefreshTokenInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // 1、获取session
+        // 1、获取请求头中的token
         String token = request.getHeader("authorization");
         if (StrUtil.isBlank(token)) {
+            // 注：这个是全部路径，如果false的话首页会被拦截掉
             return true;
         }
-
-        // 2、获取token获取redis中的用户
+        // 2、基于token获取redis中的用户
         String key = RedisConstants.LOGIN_USER_KEY + token;
         Map<Object, Object> userMap = stringRedisTemplate.opsForHash().entries(key);
         // 3、判断用户是否存在
         if (userMap.isEmpty()) {
+            // 注：这个是全部路径，如果false的话首页会被拦截掉
             return true;
         }
         // 5、将查询到Hash数据转为UserDTO对象

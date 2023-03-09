@@ -70,7 +70,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User user = query().eq("phone", phone).one();
         // 5、判断用户是否存在
         if (user == null) {
-            // 6、不存在，创建用户并保持
+            // 6、不存在，创建用户并保存
             user = createUserWithPhone(phone);
         }
         // 7、保存用户信息到redis中
