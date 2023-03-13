@@ -1,6 +1,8 @@
 package pers.xxiangyeyu.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -34,6 +36,9 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private RedissonClient redissonClient;
+
     @Override
     public Result seckillVoucher(Long voucherId) {
         // 1、查询优惠券
@@ -56,9 +61,13 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
 
         Long userId = UserHolder.getUser().getId();
         // 创建锁对象
-        SimpleRedisLock lock = new SimpleRedisLock("order:" + userId, stringRedisTemplate);
+        // SimpleRedisLock lock = new SimpleRedisLock("order:" + userId, stringRedisTemplate);
         // 获取锁
-        boolean isLock = lock.tryLock(1200L);
+        // boolean isLock = lock.tryLock(1200L);
+
+        RLock lock = redissonClient.getLock("order:" + userId);
+        // 获取锁
+        boolean isLock = lock.tryLock();
         // 判断释放获取锁成功
         if (!isLock) {
             // 获取锁失败，返回错误或重试
@@ -71,7 +80,8 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
             return proxy.createVoucherOrder(voucherId);
         } finally {
             // 释放锁
-            lock.unLock();
+            // lock.unLock();
+            lock.unlock();
         }
     }
 
